@@ -10,9 +10,13 @@ const todos: Todo[] = []
 const todoContainer = document.querySelector(".todoContainer") as HTMLDivElement
 const todoInput = document.getElementsByName("title")[0] as HTMLInputElement
 const myForm = document.getElementById("myForm") as HTMLFormElement
+const submitButton = myForm.querySelector('button') as HTMLButtonElement
+
+submitButton.innerText = "Add"
 
 myForm.onsubmit = (e: SubmitEvent) => {
   e.preventDefault() // by adding this, onSubmit it won't refresh the page
+  submitButton.innerText = "Add"
 
   const todo: Todo = {
     title: todoInput.value,
@@ -36,7 +40,7 @@ const generateTodoItem = (title: string, isCompleted: boolean, id: string) => {
   checkBox.checked = isCompleted
   checkBox.onchange = () => {
     todos.find(item => {
-      if(item.id === id) item.isCompleted = checkBox.checked
+      if (item.id === id) item.isCompleted = checkBox.checked
     })
     paragraph.className = checkBox.checked ? "textCut" : ""
   }
@@ -54,13 +58,29 @@ const generateTodoItem = (title: string, isCompleted: boolean, id: string) => {
     deleteTodo(id)
   }
 
+  // edit button
+  const editBtn: HTMLButtonElement = document.createElement("button")
+  editBtn.innerText = 'Edit'
+  editBtn.className = "editBtn"
+  editBtn.onclick = () => {
+    editTodo(id)
+  }
+
   // appending all to todoItem
-  todo.append(checkBox, paragraph, btn)
+  todo.append(checkBox, paragraph, editBtn, btn)
   todoContainer.append(todo)
 }
 
 const deleteTodo = (id: string) => {
   const idx = todos.findIndex(item => item.id === id)
+  todos.splice(idx, 1)
+  renderTodo(todos)
+}
+
+const editTodo = (id: string) => {
+  const idx = todos.findIndex(item => item.id === id)
+  todoInput.value = todos[idx].title
+  submitButton.innerText = "Update"
   todos.splice(idx, 1)
   renderTodo(todos)
 }
