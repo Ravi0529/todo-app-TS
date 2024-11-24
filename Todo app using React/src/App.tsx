@@ -1,7 +1,43 @@
+import { useState } from "react"
 import { Input, Todos } from "./components"
 import { useTheme } from "./context/ThemeContext"
 
+interface Todo {
+  id: number
+  text: string
+  completed: boolean
+}
+
 const App = () => {
+  const [todos, setTodos] = useState<Todo[]>([])
+
+  const addTodo = (text: string) => {
+    const newTodo: Todo = {
+      id: Date.now(),
+      text,
+      completed: false,
+    }
+    setTodos((prevTodos) => [...prevTodos, newTodo]);
+  }
+
+  const toggleTodo = (id: number) => {
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    )
+  }
+
+  const deleteTodo = (id: number) => {
+    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+  }
+
+  const editTodo = (id: number, newText: string) => {
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => (todo.id === id ? { ...todo, text: newText } : todo))
+    )
+  }
+
   const { theme, toggleTheme } = useTheme()
 
   return (
@@ -10,14 +46,19 @@ const App = () => {
         <h1 className="text-2xl font-bold">Todo App</h1>
         <button
           onClick={toggleTheme}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
+          className="text-2xl"
         >
-          {theme === "light" ? "Dark" : "Light"} Mode
+          {theme === "light" ? (<>🌚</>) : (<>🌝</>)}
         </button>
       </div>
       <div className="w-full max-w-xl space-y-4 mt-4">
-        <Input />
-        <Todos />
+        <Input addTodo={addTodo} />
+        <Todos
+          todos={todos}
+          toggleTodo={toggleTodo}
+          deleteTodo={deleteTodo}
+          editTodo={editTodo}
+        />
       </div>
     </div>
   )
