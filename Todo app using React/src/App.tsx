@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Input, Todos } from "./components"
 import { useTheme } from "./context/ThemeContext"
 
@@ -9,7 +9,10 @@ interface Todo {
 }
 
 const App = () => {
-  const [todos, setTodos] = useState<Todo[]>([])
+  const [todos, setTodos] = useState<Todo[]>(() => {
+    const savedTodos = localStorage.getItem("todos")
+    return savedTodos ? JSON.parse(savedTodos) : []
+  })
 
   const addTodo = (text: string) => {
     const newTodo: Todo = {
@@ -39,6 +42,10 @@ const App = () => {
   }
 
   const { theme, toggleTheme } = useTheme()
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos))
+  }, [todos])
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 flex flex-col items-center p-4">
