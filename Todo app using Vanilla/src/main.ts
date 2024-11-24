@@ -39,10 +39,17 @@ const generateTodoItem = (title: string, isCompleted: boolean, id: string) => {
   checkBox.className = "isCompleted"
   checkBox.checked = isCompleted
   checkBox.onchange = () => {
-    todos.find(item => {
-      if (item.id === id) item.isCompleted = checkBox.checked
-    })
-    paragraph.className = checkBox.checked ? "textCut" : ""
+    const targetTodo = todos.find((item) => item.id === id);
+    if (targetTodo) {
+      targetTodo.isCompleted = checkBox.checked
+      paragraph.className = checkBox.checked ? "textCut" : ""
+      editBtn.disabled = checkBox.checked
+      if (checkBox.checked) {
+        editBtn.classList.add("disabled")
+      } else {
+        editBtn.classList.remove("disabled")
+      }
+    }
   }
 
   // title
@@ -62,8 +69,13 @@ const generateTodoItem = (title: string, isCompleted: boolean, id: string) => {
   const editBtn: HTMLButtonElement = document.createElement("button")
   editBtn.innerText = 'Edit'
   editBtn.className = "editBtn"
-  editBtn.onclick = () => {
-    editTodo(id)
+  if (isCompleted) {
+    editBtn.disabled = true
+    editBtn.classList.add("disabled")
+  } else {
+    editBtn.onclick = () => {
+      editTodo(id)
+    }
   }
 
   // appending all to todoItem
