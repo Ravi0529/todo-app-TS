@@ -26,14 +26,16 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         localStorage.setItem("theme", theme)
         if (theme === "dark") {
             document.documentElement.classList.add("dark")
+            document.documentElement.classList.remove("light")
         } else {
             document.documentElement.classList.remove("dark")
+            document.documentElement.classList.add("light")
         }
     }, [theme])
 
     return (
         <ThemeContext.Provider value={{ theme, toggleTheme }}>
-            <div className={theme === "dark" ? "dark" : ""}>{children}</div>
+            <div className={theme === "dark" ? "dark" : "light"}>{children}</div>
         </ThemeContext.Provider>
     )
 }
